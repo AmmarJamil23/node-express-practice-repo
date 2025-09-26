@@ -1,0 +1,77 @@
+A cookie is a piece of text sotred in the browser. The server 
+can send cookies to the client, the browser saves them, and 
+then automatically includes them in every request back to
+the server. Thi is how server remeber who you are across
+multiple requests since HTTP is itself stateless.
+
+normal cookie : javascript can read it
+httpOnlycookie : javascript cannot read it
+=> protects againt XSS.
+
+
+
+1. Default cookie lifetime
+
+If you don’t specify anything:
+
+res.cookie("username", "ammar");
+
+
+ The cookie is a session cookie.
+
+It lives only while the browser is open.
+
+Once you close the browser, it disappears.
+
+Next time, you’ll need to log in again.
+
+2. Controlling cookie lifetime
+
+You can tell the server how long the browser should keep the cookie:
+
+// Expires after 1 hour
+res.cookie("username", "ammar", {
+  maxAge: 1000 * 60 * 60 // 1 hour in milliseconds
+});
+
+
+Options:
+
+maxAge → how long in ms (relative, e.g. 1 hour from now).
+
+expires → exact date/time when cookie dies.
+
+3. Why expiration matters
+
+If cookie lives too long → risk if someone steals it.
+
+If cookie lives too short → user gets annoyed logging in often.
+
+Balance:
+
+Short expiry for sensitive cookies (session, authentication).
+
+Longer expiry for non-sensitive cookies (like theme = dark mode).
+
+4. Real-world best practice
+
+Session cookies (short-lived) for login.
+
+Refresh with new tokens if user stays active (so they don’t get logged out mid-use).
+
+For security, also set:
+
+httpOnly: true → JS in browser can’t read the cookie (prevents XSS).
+
+secure: true → cookie only sent over HTTPS.
+
+Example:
+
+res.cookie("sessionId", "randomtoken123", {
+  httpOnly: true,
+  secure: true,
+  maxAge: 1000 * 60 * 15 // 15 minutes
+});
+
+
+ So the server remembers you as long as the cookie exists. Once it expires (or you delete it), the server won’t recognize you anymore → you need to log in again.
